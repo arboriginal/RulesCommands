@@ -1,0 +1,63 @@
+#############################################################################
+# PLEASE NOTE: This config file has to be used as an example...             #
+#                                                                           #
+# It will maybe not work for you because it use essentials + groupmanager.  #
+# So adjust commands to feet your needs and reload the configuration ;)     #
+#############################################################################
+messages:
+  # Prefix used in the plugin messages, you can use « {prefix} » in them and this value will replace this in it.
+  prefix: "&8[&6RulesCommands&8] "
+  # Message sent to player / console when using /rulescmds-reload
+  reload: "{prefix}&aConfiguration reloaded successfully."
+  # Error messages when you make a mistake in your configurations
+  erPerm: "{prefix}&cError in your configuration: Permissions must be strings!"
+  erCmds: "{prefix}&cError in your configuration: Commands must be strings!"
+  erAct: "{prefix}&cError in your configuration: An action is not correctly formatted!"
+
+# Those events works in the same way, if you understand how to configure onJoin, you know how to configure onRefuse and onAccept
+#
+# You can use {player} in commands: This will be replaced by the concerned player's name.
+# You can negate the permissions by adding "-" before the permission name.
+# Permissions are not required, you can define an action (list of commands) without. 
+events:
+  # Players who didn't accepted yet only will fire this event
+  onJoin:
+  - commands: # No permission restriction for this / those commands, this will be executed each time
+    - jail {player} rules
+  
+  - permission: -essentials.build # For player who DON'T have essentials.build permission
+    commands:
+    - tellraw {player} {"text":"You have to accept the rules to play here!","color":"red","bold":true}
+
+  - permission: essentials.build # For player who have essentials.build permission
+    commands:
+    - tellraw {player} {"text":"Rules have changed, please recheck them...","color":"red","bold":true}
+
+  # Players who click on deny will fire this event
+  onRefuse:
+  - commands:
+    - manuadd {player} hasrefusedrules
+    - unjail {player}
+    - jail {player} goodbye
+    - tellraw {player} {"color":"red","text":"Sorry {player}, but you can't play here if you're not agree with the rules."}
+    - tellraw {player} {"color":"yellow","text":"If you made a mistake, contact the staff on discord, otherwise leave: You will be jailed here forever..."}
+
+  # Players who click on accept will fire this event
+  onAccept:
+  - commands:
+    - unjail {player}
+
+  - permission: essentials.build
+    commands:
+    - title {player} subtitle {"text":"Sorry for that, but changes in rules implied you reaccept","color":"gray"}
+    - title {player} title {"text":"Welcome back ","color":"aqua","extra":[{"text":"{player}","color":"yellow"},{"text":"!","color":"aqua"}]}
+
+  - permission: -essentials.build
+    commands:
+    - title {player} subtitle {"text":"Respect the rules and everything will be OK :)","color":"gray"}
+    - title {player} title {"text":"Welcome on board ","color":"aqua","extra":[{"text":"{player}","color":"yellow"},{"text":"!","color":"aqua"}]}
+
+  - permission: -essentials.build
+    commands:
+    - manuadd {player} builder
+
